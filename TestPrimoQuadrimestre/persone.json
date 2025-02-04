@@ -1,0 +1,23 @@
+[
+  {
+    "Id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "Nome": "Domenico",
+    "Cognome": "Pace",
+    "DataDiNascita": "1999-11-20T11:02:10.661Z",
+    "Dominio": 1
+  },
+  {
+    "Id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "Nome": "Michele",
+    "Cognome": "Sette",
+    "DataDiNascita": "2001-01-27T11:07:13.846Z",
+    "Dominio": 0
+  },
+  {
+    "Id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "Nome": "Davide",
+    "Cognome": "Golucci",
+    "DataDiNascita": "2003-02-20T11:08:31.431Z",
+    "Dominio": 0
+  }
+]

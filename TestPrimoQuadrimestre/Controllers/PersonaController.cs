@@ -1,30 +1,40 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.IO;
+using System.Text.Json;
 using TestPrimoQuadrimestre.Dto;
 
 namespace TestPrimoQuadrimestre.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/persone")]
     [ApiController]
     public class PersonaController : ControllerBase
     {
-        List<Persona> listaPersone = new List<Persona>();
+        private static readonly string FilePath = "persone.json"; 
 
-        // GET: api/<PersonaController>
+        private List<Persona> listaPersone = new List<Persona>();
+
+        public PersonaController()
+        {
+            listaPersone = CaricaPersoneDaFile(); 
+        }
+
+        // GET: api/persone
         [HttpGet]
         public IEnumerable<Persona> StampaPersone()
         {
             return listaPersone;
         }
 
-        // POST api/<PersonaController>
+        // POST api/persone
         [HttpPost]
-        public bool CreaPersona(Persona personaCreata)
+        public IActionResult CreaPersona(Persona personaCreata)
         {
             listaPersone.Add(personaCreata);
-            return true;
+            SalvaPersoneSuFile();
+            return Ok("Persona creata!");
         }
 
-        // PUT api/<PersonaController>/5
+        // PUT api/persone/{id}
         [HttpPut("{id}")]
         public IActionResult AggiornaPersona(Guid id, [FromBody] Persona personaAggiornata)
         {
@@ -38,10 +48,11 @@ namespace TestPrimoQuadrimestre.Controllers
             persona.Nome = personaAggiornata.Nome;
             persona.Cognome = personaAggiornata.Cognome;
             persona.DataDiNascita = personaAggiornata.DataDiNascita;
+            SalvaPersoneSuFile(); 
             return Ok("Persona aggiornata!");
         }
 
-        // DELETE api/<PersonaController>/5
+        // DELETE api/persone/{id}
         [HttpDelete("{id}")]
         public IActionResult EliminaPersona(Guid id)
         {
@@ -53,11 +64,11 @@ namespace TestPrimoQuadrimestre.Controllers
             }
 
             listaPersone.Remove(persona);
-
+            SalvaPersoneSuFile();
             return Ok("Persona eliminata!");
         }
 
-        // GET api/<PersonaController>/search/5
+        // GET api/persone/{id}
         [HttpGet("{id}")]
         public IActionResult CercaPersona(Guid id)
         {
@@ -68,5 +79,40 @@ namespace TestPrimoQuadrimestre.Controllers
             }
             return Ok(personaDaCercare);
         }
+
+        
+        private List<Persona> CaricaPersoneDaFile()
+        {
+            if (!System.IO.File.Exists(FilePath))
+            {
+                return new List<Persona>();
+            }
+
+            try
+            {
+                var jsonData = System.IO.File.ReadAllText(FilePath);
+                return JsonSerializer.Deserialize<List<Persona>>(jsonData) ?? new List<Persona>();
+            }
+            catch (Exception)
+            {
+                return new List<Persona>();
+            }
+        }
+        private void SalvaPersoneSuFile()
+        {
+            try
+            {
+                var jsonData = JsonSerializer.Serialize(listaPersone, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+                System.IO.File.WriteAllText(FilePath, jsonData);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Errore nel salvataggio delle persone su file: {ex.Message}");
+            }
+        }
+
     }
 }
